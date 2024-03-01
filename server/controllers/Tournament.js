@@ -57,7 +57,7 @@ exports.createTournament = async (req, res) => {
     // Upload the Thumbnail to Cloudinary
     const thumbnailImage = await uploadImageToCloudinary(
       thumbnail,
-      process.env.FOLDER_NAME
+      `${process.env.FOLDER_NAME}`
     )
 
     console.log(thumbnailImage)
@@ -132,7 +132,7 @@ exports.editTournament = async (req, res) => {
       const thumbnail = req.files.thumbnailImage
       const thumbnailImage = await uploadImageToCloudinary(
         thumbnail,
-        process.env.FOLDER_NAME
+        `${process.env.FOLDER_NAME}`
       )
       tournament.thumbnail = thumbnailImage.secure_url
     }
