@@ -58,7 +58,7 @@ export function paybackRequestMailSend(email,upiId, amount, token) {
         throw new Error(response.data.message)
       }
 
-      toast.success("Money will be transferred to your UPI ID within 3 days")
+      toast.success("Money will be transferred to your UPI ID within 24 hours")
       // navigate("/dashboard/my-profile")
     } catch (error) {
       console.log("SEND MAIL API ERROR............", error)

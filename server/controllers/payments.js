@@ -38,7 +38,7 @@ exports.paybackRequestEmail = async (req, res) => {
     const emailResUser = await mailSender(
       email,
       "Your Request has been sent",
-      `Your request for withdrawal of ${amount} has been sent to the admin. Your money will be transferred to your UPI ID - ${upiId} within 3 days. Thanks for using our services.`
+      `Your request for withdrawal of ${amount} has been sent to the admin. Your money will be transferred to your UPI ID - ${upiId} within 24 hours. Thanks for using our services.`
     )
 
 
