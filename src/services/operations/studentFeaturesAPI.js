@@ -5,14 +5,19 @@ import { resetCart } from "../../slices/cartSlice"
 import { setPaymentLoading } from "../../slices/courseSlice"
 import { apiConnector } from "../apiConnector"
 import { studentEndpoints } from "../apis"
+import { setLoading} from "../../slices/authSlice"
 
 const {
+  PAYBACK_REQUEST_EMAIL_API,
   COURSE_PAYMENT_API,
   COURSE_VERIFY_API,
   SEND_PAYMENT_SUCCESS_EMAIL_API,
+  UPDATE_WALLET,
 } = studentEndpoints
 
 // Load the Razorpay SDK from the CDN
+
+
 function loadScript(src) {
   return new Promise((resolve) => {
     const script = document.createElement("script")
@@ -25,6 +30,81 @@ function loadScript(src) {
     }
     document.body.appendChild(script)
   })
+}
+
+export function paybackRequestMailSend(email,upiId, amount, token) {
+  console.log(`email inside paybackRequestMailSend function is ${email} and upiId is ${upiId} amount is ${amount} and token is ${token}`);
+
+  return async (dispatch) => {
+    const toastId = toast.loading("Loading...")
+    dispatch(setLoading(true))
+    try {
+      const response = await apiConnector(
+        "POST",
+        PAYBACK_REQUEST_EMAIL_API,
+        {
+          email,
+          upiId,
+          amount
+        },
+        {
+          Authorization: `Bearer ${token}`,
+        }
+      )
+
+      console.log("SEND MAIL API RESPONSE............", response)
+
+      if (!response.data.success) {
+        throw new Error(response.data.message)
+      }
+
+      toast.success("Money will be transferred to your UPI ID within 3 days")
+      // navigate("/dashboard/my-profile")
+    } catch (error) {
+      console.log("SEND MAIL API ERROR............", error)
+      toast.error("Mail sending Failed")
+    }
+    dispatch(setLoading(false))
+    toast.dismiss(toastId)
+  }
+}
+
+
+export function updateTournamentPlayersWallet(data,tournamentId,killAmount,token) {
+  console.log(`data inside updateTournamentWallet function is ${data} and tournamentId is ${tournamentId} amount is ${killAmount} and token is ${token}`);
+
+  return async (dispatch) => {
+    const toastId = toast.loading("Loading...")
+    dispatch(setLoading(true))
+    try {
+      const response = await apiConnector(
+        "POST",
+        UPDATE_WALLET,
+        {
+          data,
+          tournamentId,
+          killAmount
+        },
+        {
+          Authorization: `Bearer ${token}`,
+        }
+      )
+
+      console.log("SEND MAIL API RESPONSE............", response)
+
+      if (!response.data.success) {
+        throw new Error(response.data.message)
+      }
+
+      toast.success("wallets of all the players has been updated")
+      // navigate("/dashboard/my-profile")
+    } catch (error) {
+      console.log("UPDATE WALLET API ERROR............", error)
+      toast.error("WALLET UPDATING FAILED")
+    }
+    dispatch(setLoading(false))
+    toast.dismiss(toastId)
+  }
 }
 
 // Buy the Course

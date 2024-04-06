@@ -37,8 +37,8 @@ export const sidebarLinks = [
   },
   {
     id: 7,
-    name: "Cart",
-    path: "/dashboard/cart",
+    name: "My Wallet",
+    path: "/dashboard/wallet",
     type: ACCOUNT_TYPE.STUDENT,
     icon: "VscArchive",
   },

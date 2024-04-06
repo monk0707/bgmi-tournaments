@@ -5,6 +5,9 @@ import { Link } from "react-router-dom"
 import { fetchInstructorCourses } from "../../../services/operations/courseDetailsAPI"
 import { getInstructorData } from "../../../services/operations/profileAPI"
 import InstructorChart from "./InstructorDashboard/InstructorChart"
+import SendMailForm from "./InstructorDashboard/SendMailForm"
+
+import UpdateTournamentPlayersWallet from "./InstructorDashboard/UpdateTournamentPlayersWallet"
 
 export default function Instructor() {
 
@@ -135,8 +138,13 @@ export default function Instructor() {
                       All Teams are 
                     </div>
                       {
-                        course.playersEnrolled.map((player)=>(
+                        course.playersEnrolled.map((player,it)=>(
+                          
                           <div className="w-[900px] flex flex-row justify-between my-2">
+                            <div className="text-yellow-50 text-sm">
+                              {/* {console.log("teamno is :/ ",it)} */}
+                              {it+1}
+                            </div>
                             <div className="text-yellow-50 text-sm">
                               {/* {console.log("username is :/ ",player.userName)} */}
                               {player.userName}
@@ -154,14 +162,24 @@ export default function Instructor() {
                         ))
                       }
                   </div>
+                    <div>
+                      <SendMailForm/>
+                    </div>
+
+                    <div className="mt-10">
+                      {/* what to do here. We will create a form which will ask for 25 values in which we have to fill the no of kills of 25 teams and then update the wallet of all 25 teams using a loop. */}
+
+                      <UpdateTournamentPlayersWallet/>
+
+                      </div>
                   </div>
                   <hr
-                  style={{
-                    background: "white",
-                    height: "2px",
-                    border: "none",
-                  }}
-                />
+                    style={{
+                      background: "white",
+                      height: "2px",
+                      border: "none",
+                    }}
+                  />
                 </div>
               ))}
 

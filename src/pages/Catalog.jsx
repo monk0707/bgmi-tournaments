@@ -34,7 +34,7 @@ const Catalog = ()=> {
         // setCategoryId(category_id)
         console.log("The response of get all courses api is ",res)
         setCourses(res?.data?.data);
-        console.log(courses)
+        // console.log(courses)
         setLoading(false)
       } catch (error) {
         console.log("Could not fetch courses.", error)
@@ -61,14 +61,14 @@ const Catalog = ()=> {
       </div>
     )
   }
-  // else if (!loading && !courses.success) {
-  //   return <Error />
-  // }
+  //  else if (!loading && !courses.success) {
+  //    return <Error />
+  //  }
   
   return (
     
     <>
-    {console.log("I am inside catalog page")}
+    {console.log("I am inside tournaments page")}
 
       {/* So what to do --> courses ko map karake cards dikha do  */}
 

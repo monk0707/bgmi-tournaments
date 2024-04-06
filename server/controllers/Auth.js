@@ -90,10 +90,6 @@ exports.signup = async (req, res) => {
       about: null,
       contactNumber: null,
     })
-    // creating wallet : 
-    const walletDetails = await Wallet.create({
-      amount: 0,
-    })
 
     const user = await User.create({
       userName,
@@ -104,7 +100,7 @@ exports.signup = async (req, res) => {
       accountType: accountType,
       approved: approved,
       additionalDetails: profileDetails._id,
-      wallet: walletDetails._id,
+      wallet: 0.0,
       image: "",
     })
 

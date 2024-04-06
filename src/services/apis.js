@@ -1,6 +1,8 @@
 // require("dotenv").config();
 
 const BASE_URL = `${process.env.REACT_APP_BASE_URL}`
+// const BASE_URL = "http://localhost:4000/api/v1"
+
 
 // AUTH ENDPOINTS
 export const endpoints = {
@@ -23,6 +25,9 @@ export const profileEndpoints = {
 
 // STUDENTS ENDPOINTS
 export const studentEndpoints = {
+  PAYBACK_REQUEST_EMAIL_API: BASE_URL + "/payment/paybackRequestEmail",
+  UPDATE_WALLET: BASE_URL + "/payment/updateWalletAfterTournament",
+  
   COURSE_PAYMENT_API: BASE_URL + "/payment/capturePayment",
   COURSE_VERIFY_API: BASE_URL + "/payment/verifyPayment",
   SEND_PAYMENT_SUCCESS_EMAIL_API: BASE_URL + "/payment/sendPaymentSuccessEmail",
@@ -73,6 +78,7 @@ export const contactusEndpoint = {
 
 export const registrationEndpoints = {
   REGISTER_API: BASE_URL + "/registration/registerNow",
+  SEND_MAIL_API: BASE_URL + "/registration/sendMail",
 }
 
 // SETTINGS PAGE API

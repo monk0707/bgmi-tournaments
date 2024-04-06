@@ -6,8 +6,13 @@ const {
   // verifySignature,
   verifyPayment,
   sendPaymentSuccessEmail,
+  paybackRequestEmail,
+  updateWalletAfterTournament,
 } = require("../controllers/payments")
 const { auth, isTeam, isUser, isAdmin } = require("../middleware/auth")
+
+router.post("/paybackRequestEmail", auth, isUser, paybackRequestEmail)
+router.post("/updateWalletAfterTournament", auth, isTeam, updateWalletAfterTournament)
 router.post("/capturePayment", auth, isUser, capturePayment)
 router.post("/verifyPayment", auth, isUser, verifyPayment)
 router.post(

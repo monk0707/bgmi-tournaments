@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const Tournament = require("../models/Tournament");
 const Registration = require("../models/Registration");
 
+const mailSender = require("../utils/mailSender");
+
 require("dotenv").config()
 
 // Signup Controller for Registering Users
@@ -244,6 +246,83 @@ exports.registerNow = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "User cannot be registered for the tournament. Please try again.",
+    })
+  }
+}
+
+exports.sendMail = async (req, res) => {
+
+  try{
+    const {roomId,roomPassword, courseId} = req.body
+
+    console.log(`roomId inside sendMail controller is ${roomId} and room password is ${roomPassword} courseId is ${courseId}`);
+
+    const userId = req.user.id;
+
+    if (
+      !roomId || !roomPassword || !courseId
+    ) {
+      return res.status(403).send({
+        success: false,
+        message: "All Fields are required",
+      })
+    }
+
+    if (
+      !userId
+    ) {
+      return res.status(403).send({
+        success: false,
+        message: "You are not logged in",
+      })
+    }
+
+    const userDetails = await User.findById(
+      { _id:userId }
+    )
+
+    if (!userDetails) {
+      return res.status(400).json({
+        success: false,
+        message: "User does not exists. Please sign in to continue.",
+      })
+    }
+
+    // now find the tournament details : 
+    const tournament = await Tournament.find({
+       _id: courseId
+    })
+      .populate({
+        path: "playersEnrolled",
+        populate: {
+          path: "additionalDetails",
+        },
+      })
+      .exec()
+
+      console.log("tournament details inside sendMail controller are ",tournament[0].playersEnrolled[0].email);
+    
+
+    // now send the mail to the user : 
+
+    // what to do now : 
+
+    tournament[0].playersEnrolled.map(async (player,teamNo) => {
+      console.log("player is ",player);
+      // send the mail to the player : 
+      mailSender(player.email,"Tournament Details",`You are successfully registered for the tournament. The room id is ${roomId} and the room password is ${roomPassword}. Your team No is ${teamNo+1}`)
+    })
+
+    return res.status(200).json({
+      success: true,
+      userDetails,tournament,
+      message: "Mail sent successfully",
+    })
+  }catch(error){
+    console.error(error)
+    return res.status(500).json({
+      success: false,
+      message: "Mail cannot be sent. Please try again.",
     })
   }
 }

@@ -11,6 +11,151 @@ const { paymentSuccessEmail } = require("../mail/templates/paymentSuccessEmail")
 // const CourseProgress = require("../models/CourseProgress")
 
 // Capture the payment and initiate the Razorpay order
+
+// const { contactUsEmail } = require("../mail/templates/contactFormRes")
+require("dotenv").config()
+
+
+exports.paybackRequestEmail = async (req, res) => {
+  const { email, upiId,amount } = req.body
+
+  const paymentEmail = process.env.PAYMENT_EMAIL
+
+  console.log(req.body)
+  
+  try {
+
+    // mail sent to the admins payment email for the processing of the payment : 
+
+    const emailRes = await mailSender(
+      paymentEmail,
+      "User Wants to Withdraw Money",
+      `Email Id - ${email} wants to withdraw ${amount} to UPI ID - ${upiId}`
+    )
+
+    // sent mail to the user that the request has been sent to the admin :
+
+    const emailResUser = await mailSender(
+      email,
+      "Your Request has been sent",
+      `Your request for withdrawal of ${amount} has been sent to the admin. Your money will be transferred to your UPI ID - ${upiId} within 3 days. Thanks for using our services.`
+    )
+
+
+    console.log("Email Res to admin ", emailRes)
+    console.log("Email Res to user ", emailResUser)
+    
+    return res.json({
+      success: true,
+      message: "Email send successfully",
+    })
+  } catch (error) {
+    console.log("Error", error)
+    console.log("Error message :", error.message)
+    return res.json({
+      success: false,
+      message: "Something went wrong...",
+    })
+  }
+}
+
+
+
+
+exports.updateWalletAfterTournament = async (req, res) => {
+
+  try{
+  const { data,tournamentId,killAmount} = req.body
+  
+  // ab aayega asli maja : 
+  // to karna ye hai ki data ko split karo and ek array mai store kar lo and saare players enrolled nikaalo and unke wallet amount ko update kar do : 
+
+  const userId = req.user.id;
+
+    if (
+      !data || !tournamentId || !killAmount
+    ) {
+      return res.status(403).send({
+        success: false,
+        message: "All Fields are required",
+      })
+    }
+
+    if (
+      !userId
+    ) {
+      return res.status(403).send({
+        success: false,
+        message: "You are not logged in",
+      })
+    }
+
+    const userDetails = await User.findById(
+      { _id:userId }
+    )
+
+    if (!userDetails) {
+      return res.status(400).json({
+        success: false,
+        message: "User does not exists. Please sign in to continue.",
+      })
+    }
+
+    // now find the tournament details : 
+    const tournament = await Tournament.find({
+       _id: tournamentId
+    })
+      .populate({
+        path: "playersEnrolled",
+        populate: {
+          path: "additionalDetails",
+        },
+      })
+      .exec()
+
+    
+    // now get the array of kills by splitting the data : 
+
+    // what the fuck am I doing I need to do a lot of things fucking lot of things bro I wants the king status at any cost respect is everything for me , everything.
+    
+    const kills = data.split(",");
+    console.log("kills array is ",kills);
+
+    console.log("tournament details inside update wallet controller are ",tournament[0].playersEnrolled[0].email);
+
+    tournament[0].playersEnrolled.map(async (player,index) => {
+      console.log("player is ",player);
+      // now let's update the wallet of the player : 
+      const walletAmount = player.wallet;
+      const updatedAmount = walletAmount + ((kills[index]-"")*killAmount);
+
+      // now update this users wallet with updated amount : 
+      const updatedWallet = await User.findByIdAndUpdate(
+        {_id:player._id},
+        {wallet:updatedAmount}
+      )
+
+      console.log("updated wallet is ",updatedWallet);
+    })
+
+    return res.json({
+      success: true,
+      message: "Wallet updated successfully",
+    })
+
+  }catch(error){
+    console.log("Error", error)
+    console.log("Error message :", error.message)
+    return res.json({
+      success: false,
+      message: "Something went wrong... while updating the wallet after the tournament.",
+    })
+  }
+}
+
+
+
+
 exports.capturePayment = async (req, res) => {
   const { courses } = req.body
   const userId = req.user.id
